@@ -44,7 +44,8 @@ const LANGUAGES = [
 export default function Settings() {
     useProxy(storage)
     
-    // On stocke l'état du bouton dans une variable pour s'en servir juste après
+    // On vérifie la langue pour tout le menu
+    const isFr = storage.language === 'fr'
     const showImg = storage.showImage ?? true
 
     return (
@@ -53,7 +54,7 @@ export default function Settings() {
                 
                 {/* --- SÉLECTION DE LA LANGUE --- */}
                 <TableRadioGroup
-                    title="Langue par défaut (Si champs vides)"
+                    title={isFr ? "Langue par défaut (Si champs vides)" : "Default Language (If fields are empty)"}
                     defaultValue={storage.language || 'en'}
                     onChange={(v: string) => (storage.language = v)}
                 >
@@ -67,12 +68,12 @@ export default function Settings() {
                     ))}
                 </TableRadioGroup>
 
-                <TableRowGroup title="Personnalisation">
+                <TableRowGroup title={isFr ? "Personnalisation" : "Customization"}>
                     
                     {/* Bouton On/Off pour l'image */}
                     <TableRow
-                        label="Afficher l'image"
-                        subLabel="Active ou désactive l'image à gauche"
+                        label={isFr ? "Afficher l'image" : "Show image"}
+                        subLabel={isFr ? "Active ou désactive l'image à gauche" : "Enable or disable the left image"}
                         trailing={
                             <Switch 
                                 value={showImg} 
@@ -81,14 +82,18 @@ export default function Settings() {
                         }
                     />
 
-                    {/* ASTUCE ICI : Ce bloc ne s'affiche QUE si 'showImg' est sur ON */}
+                    {/* Champ Lien de l'image */}
                     {showImg && (
                         <>
-                            <TableRow label="Lien de l'image ou du GIF" subLabel="Lien en .png, .jpg ou .gif" arrow={false} />
+                            <TableRow 
+                                label={isFr ? "Lien de l'image ou du GIF" : "Image or GIF link"} 
+                                subLabel={isFr ? "Lien en .png, .jpg ou .gif" : "Link ending in .png, .jpg or .gif"} 
+                                arrow={false} 
+                            />
                             <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                 <TextInput
                                     style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                                    placeholder="Ex: https://monsite.com/image.gif"
+                                    placeholder={isFr ? "Ex: https://monsite.com/image.gif" : "Ex: https://mysite.com/image.gif"}
                                     placeholderTextColor="#80848e"
                                     value={storage.customImageUrl || ''}
                                     onChangeText={(text: string) => (storage.customImageUrl = text)}
@@ -98,7 +103,11 @@ export default function Settings() {
                     )}
 
                     {/* Champ Date */}
-                    <TableRow label="Date de fin" subLabel="Format exact : YYYY-MM-DD" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Date de fin" : "End Date"} 
+                        subLabel={isFr ? "Format exact : YYYY-MM-DD" : "Exact format: YYYY-MM-DD"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
@@ -110,7 +119,11 @@ export default function Settings() {
                     </View>
 
                     {/* Champ Titre */}
-                    <TableRow label="Titre principal" subLabel="Le texte affiché en haut" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Titre principal" : "Main Title"} 
+                        subLabel={isFr ? "Le texte affiché en haut" : "The text displayed at the top"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
@@ -122,11 +135,15 @@ export default function Settings() {
                     </View>
 
                     {/* Champ Texte des jours */}
-                    <TableRow label="Texte des Jours" subLabel="Le texte à côté des chiffres" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Texte des Jours" : "Days Text"} 
+                        subLabel={isFr ? "Le texte à côté des chiffres" : "The text next to the numbers"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: JOURS RESTANTS"
+                            placeholder={isFr ? "Ex: JOURS RESTANTS" : "Ex: DAYS LEFT"}
                             placeholderTextColor="#80848e"
                             value={storage.customDaysText || ''}
                             onChangeText={(text: string) => (storage.customDaysText = text)}
@@ -134,11 +151,15 @@ export default function Settings() {
                     </View>
 
                     {/* Champ Description (Bas) */}
-                    <TableRow label="Description (Bas)" subLabel="Le petit texte tout en bas" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Description (Bas)" : "Description (Bottom)"} 
+                        subLabel={isFr ? "Le petit texte tout en bas" : "The small text at the very bottom"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: Sortie prévue bientôt !"
+                            placeholder={isFr ? "Ex: Sortie prévue bientôt !" : "Ex: Releasing soon!"}
                             placeholderTextColor="#80848e"
                             value={storage.customDescription || ''}
                             onChangeText={(text: string) => (storage.customDescription = text)}
@@ -146,22 +167,30 @@ export default function Settings() {
                     </View>
 
                     {/* Les couleurs du contour */}
-                    <TableRow label="Couleur de contour 1 (Gauche)" subLabel="Code couleur HEX" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Couleur de contour 1 (Gauche)" : "Outline Color 1 (Left)"} 
+                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: #E146C6 (Rose par défaut)"
+                            placeholder={isFr ? "Ex: #E146C6 (Rose par défaut)" : "Ex: #E146C6 (Default Pink)"}
                             placeholderTextColor="#80848e"
                             value={storage.customColor1 || ''}
                             onChangeText={(text: string) => (storage.customColor1 = text)}
                         />
                     </View>
 
-                    <TableRow label="Couleur de contour 2 (Droite)" subLabel="Code couleur HEX" arrow={false} />
+                    <TableRow 
+                        label={isFr ? "Couleur de contour 2 (Droite)" : "Outline Color 2 (Right)"} 
+                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"} 
+                        arrow={false} 
+                    />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: #14acc0 (Cyan par défaut)"
+                            placeholder={isFr ? "Ex: #14acc0 (Cyan par défaut)" : "Ex: #14acc0 (Default Cyan)"}
                             placeholderTextColor="#80848e"
                             value={storage.customColor2 || ''}
                             onChangeText={(text: string) => (storage.customColor2 = text)}
@@ -170,6 +199,7 @@ export default function Settings() {
 
                 </TableRowGroup>
 
+                {/* Le reste ne change pas */}
                 <TableRadioGroup
                     title="Frequency"
                     defaultValue={storage.frequency}
@@ -214,7 +244,7 @@ export default function Settings() {
                 <View style={{ paddingHorizontal: 0 }}>
                     {Button && (
                         <Button
-                            text="Preview Toast"
+                            text={isFr ? "Tester l'affichage" : "Preview Toast"}
                             variant="primary"
                             size="md"
                             onPress={() => showCountdownToast()}

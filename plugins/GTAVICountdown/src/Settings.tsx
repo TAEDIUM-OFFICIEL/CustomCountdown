@@ -24,7 +24,6 @@ const TableRadioGroup = findRedesignComponent('TableRadioGroup') as React.FC<Tab
 const TableRadioRow = findRedesignComponent('TableRadioRow') as TableRadioRowType
 
 const { TableRowGroup, Stack, TableRow } = components
-// Importations nettoyées : plus d'Image, ni de StyleSheet, ni de Linking !
 const { ScrollView, View, TextInput } = ReactNative
 
 const Slider = (props: any) => (
@@ -44,11 +43,11 @@ export default function Settings() {
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
                 
-                {/* TON CHAMP PERSONNALISÉ EST MAINTENANT LE TOUT PREMIER ÉLÉMENT */}
                 <TableRowGroup title="Personnalisation">
+                    {/* Champ Date */}
                     <TableRow
                         label="Date de fin du compteur"
-                        subLabel="Format exact : YYYY-MM-DD (ex: 2026-11-19)"
+                        subLabel="Format exact : YYYY-MM-DD"
                         arrow={false}
                     />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
@@ -60,9 +59,40 @@ export default function Settings() {
                             onChangeText={(text: string) => (storage.customDate = text)}
                         />
                     </View>
+
+                    {/* Champ Titre */}
+                    <TableRow
+                        label="Titre principal"
+                        subLabel="Le texte affiché en haut"
+                        arrow={false}
+                    />
+                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                        <TextInput
+                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
+                            placeholder="Ex: WEAK N' STEAL"
+                            placeholderTextColor="#80848e"
+                            value={storage.customTitle || ''}
+                            onChangeText={(text: string) => (storage.customTitle = text)}
+                        />
+                    </View>
+
+                    {/* Champ Description (Bas) */}
+                    <TableRow
+                        label="Description (Bas)"
+                        subLabel="Le petit texte affiché sous les jours"
+                        arrow={false}
+                    />
+                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                        <TextInput
+                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
+                            placeholder="Ex: Sortie prévue très bientôt !"
+                            placeholderTextColor="#80848e"
+                            value={storage.customDescription || ''}
+                            onChangeText={(text: string) => (storage.customDescription = text)}
+                        />
+                    </View>
                 </TableRowGroup>
 
-                {/* Les paramètres de fréquence */}
                 <TableRadioGroup
                     title="Frequency"
                     defaultValue={storage.frequency}
@@ -78,7 +108,6 @@ export default function Settings() {
                     ))}
                 </TableRadioGroup>
 
-                {/* Le paramètre de durée d'affichage */}
                 <TableRowGroup title="Behavior">
                     <TableRow
                         label="Toast Duration"
@@ -106,7 +135,6 @@ export default function Settings() {
                     />
                 </TableRowGroup>
 
-                {/* Le bouton de test */}
                 <View style={{ paddingHorizontal: 0 }}>
                     {Button && (
                         <Button

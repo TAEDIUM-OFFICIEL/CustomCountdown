@@ -7,7 +7,7 @@ const { View, Text, Image, StyleSheet } = ReactNative
 
 const LinearGradient = findByProps('LinearGradient')?.default
 
-const Colors = {
+const DefaultColors = {
     primary: '#E146C6',
     secondary: '#14acc0',
     white: '#ffffff',
@@ -38,17 +38,17 @@ const styles = StyleSheet.create({
     separator: {
         width: 1,
         height: '80%',
-        backgroundColor: Colors.secondary,
+        backgroundColor: DefaultColors.secondary,
         marginHorizontal: 10,
         opacity: 0.6,
     },
     textContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        paddingLeft: 4, // Ajoute un peu d'espace si l'image est absente
+        paddingLeft: 4,
     },
     headerText: {
-        color: Colors.white,
+        color: DefaultColors.white,
         fontSize: 12,
         fontWeight: 'medium',
         opacity: 0.8,
@@ -59,22 +59,18 @@ const styles = StyleSheet.create({
         marginVertical: 4,
     },
     daysText: {
-        color: Colors.primary,
         fontSize: 22,
         fontWeight: '900',
-        textShadowColor: 'rgba(255, 0, 255, 0.7)',
         textShadowRadius: 12,
         marginRight: 4,
     },
     subText: {
-        color: Colors.secondary,
         fontSize: 14,
         fontWeight: 'bold',
-        textShadowColor: 'rgba(0, 213, 255, 0.7)',
         textShadowRadius: 10,
     },
     footerText: {
-        color: Colors.lightGray,
+        color: DefaultColors.lightGray,
         fontSize: 9,
     },
 })
@@ -82,27 +78,31 @@ const styles = StyleSheet.create({
 export default function CountdownToast({ days }: CountdownToastProps) {
     if (!LinearGradient) return null
 
+    // On récupère tous les textes personnalisés
     const customTitle = storage.customTitle || 'GRAND THEFT AUTO VI'
     const customDescription = storage.customDescription || 'Coming 19th Nov 2026'
+    const customDaysText = storage.customDaysText || 'DAYS LEFT'
     
-    // On vérifie les réglages de l'image
+    // On récupère les couleurs (avec une valeur par défaut si c'est vide)
+    const color1 = storage.customColor1 && storage.customColor1.trim() !== '' ? storage.customColor1 : DefaultColors.primary
+    const color2 = storage.customColor2 && storage.customColor2.trim() !== '' ? storage.customColor2 : DefaultColors.secondary
+
     const showImage = storage.showImage ?? true
     const currentImageUrl = storage.customImageUrl && storage.customImageUrl.trim() !== '' ? storage.customImageUrl : LOGO_URL
 
     return (
         <LinearGradient
-            colors={[Colors.primary, Colors.secondary]}
+            colors={[color1, color2]}
             start={{ x: 0, y: 0.5 }}
             end={{ x: 1, y: 0.5 }}
             style={styles.gradientBorder}
         >
             <View style={styles.container}>
                 
-                {/* On affiche l'image et le séparateur UNIQUEMENT si showImage est vrai */}
                 {showImage && (
                     <>
                         <Image source={{ uri: currentImageUrl }} style={styles.logo} />
-                        <View style={styles.separator} />
+                        <View style={[styles.separator, { backgroundColor: color2 }]} />
                     </>
                 )}
 
@@ -110,8 +110,9 @@ export default function CountdownToast({ days }: CountdownToastProps) {
                     <Text style={styles.headerText}>{customTitle}</Text>
 
                     <View style={styles.countdownRow}>
-                        <Text style={styles.daysText}>{days}</Text>
-                        <Text style={styles.subText}>DAYS LEFT</Text>
+                        {/* On applique la couleur 1 au chiffre et la couleur 2 au texte pour correspondre au dégradé */}
+                        <Text style={[styles.daysText, { color: color1, textShadowColor: color1 }]}>{days}</Text>
+                        <Text style={[styles.subText, { color: color2, textShadowColor: color2 }]}>{customDaysText}</Text>
                     </View>
 
                     <Text style={styles.footerText}>{customDescription}</Text>

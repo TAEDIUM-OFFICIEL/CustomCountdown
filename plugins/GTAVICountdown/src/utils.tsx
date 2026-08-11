@@ -9,7 +9,6 @@ const { Image } = ReactNative as any
 const Toasts = findByProps('open', 'close')
 const UuidModule = findByProps('uuid4')
 
-// Fonction modifiée pour lire les paramètres
 export const getDaysUntilRelease = () => {
     const now = new Date()
     const userDateStr = storage.customDate ? storage.customDate : "2026-11-19T00:00:00"
@@ -22,8 +21,14 @@ export const showCountdownToast = async () => {
     try {
         const days = getDaysUntilRelease()
         const durationSec = Number(storage.displayDuration) || DEFAULT_DURATION
+        
+        // On récupère le bon lien d'image pour la charger
+        const imageUrlToLoad = storage.customImageUrl && storage.customImageUrl.trim() !== '' ? storage.customImageUrl : LOGO_URL
 
-        await Image.prefetch(LOGO_URL).catch(() => null)
+        // Si l'utilisateur a choisi d'afficher l'image, on la précharge
+        if (storage.showImage !== false) {
+            await Image.prefetch(imageUrlToLoad).catch(() => null)
+        }
 
         if (Toasts) {
             Toasts.open({

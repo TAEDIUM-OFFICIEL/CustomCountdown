@@ -1,5 +1,6 @@
 import { findByProps } from '@revenge-mod/metro'
 import { ReactNative } from '@revenge-mod/metro/common'
+import { storage } from '@vendetta/plugin'
 import { LOGO_URL } from '../constants'
 
 const { View, Text, Image, StyleSheet } = ReactNative
@@ -50,8 +51,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'medium',
         opacity: 0.8,
-        // letterSpacing causes an issue where the toast doesn't appear on some devices
-        // letterSpacing: 1,
     },
     countdownRow: {
         flexDirection: 'row',
@@ -82,6 +81,10 @@ const styles = StyleSheet.create({
 export default function CountdownToast({ days }: CountdownToastProps) {
     if (!LinearGradient) return null
 
+    // On récupère les textes personnalisés, ou on affiche le texte par défaut si le champ est vide
+    const customTitle = storage.customTitle || 'GRAND THEFT AUTO VI'
+    const customDescription = storage.customDescription || 'Coming 19th Nov 2026'
+
     return (
         <LinearGradient
             colors={[Colors.primary, Colors.secondary]}
@@ -95,14 +98,14 @@ export default function CountdownToast({ days }: CountdownToastProps) {
                 <View style={styles.separator} />
 
                 <View style={styles.textContainer}>
-                    <Text style={styles.headerText}>GRAND THEFT AUTO VI</Text>
+                    <Text style={styles.headerText}>{customTitle}</Text>
 
                     <View style={styles.countdownRow}>
                         <Text style={styles.daysText}>{days}</Text>
                         <Text style={styles.subText}>DAYS LEFT</Text>
                     </View>
 
-                    <Text style={styles.footerText}>Coming 19th Nov 2026</Text>
+                    <Text style={styles.footerText}>{customDescription}</Text>
                 </View>
             </View>
         </LinearGradient>

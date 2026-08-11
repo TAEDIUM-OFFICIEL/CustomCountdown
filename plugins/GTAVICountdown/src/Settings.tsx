@@ -36,7 +36,7 @@ const Slider = (props: any) => (
     </View>
 )
 
-// Composant de saisie amélioré avec un conteneur et des marges isolées
+// Composant de saisie standardisé pour les autres options indépendantes
 const InputField = ({ label, subLabel, placeholder, value, onChangeText }: any) => (
     <View style={{ marginTop: 6, marginBottom: 6 }}>
         <TableRow label={label} subLabel={subLabel} arrow={false} />
@@ -84,6 +84,7 @@ export default function Settings() {
 
                 <TableRowGroup title={isFr ? "Personnalisation" : "Customization"}>
                     
+                    {/* BLOC FUSIONNÉ : L'interrupteur et son champ de texte sont enveloppés ensemble */}
                     <View style={{ marginBottom: 6 }}>
                         <TableRow
                             label={isFr ? "Afficher l'image" : "Show image"}
@@ -95,17 +96,21 @@ export default function Settings() {
                                 />
                             }
                         />
+                        {showImg && (
+                            <View style={{ paddingHorizontal: 16, paddingBottom: 16, marginTop: -4 }}>
+                                <Text variant="text-xs/medium" color="TEXT_SUBTLE" style={{ marginBottom: 8 }}>
+                                    {isFr ? "Configure l'illustration à afficher à gauche (.png, .jpg, .gif)" : "Set the illustration to show on the left"}
+                                </Text>
+                                <TextInput
+                                    style={{ backgroundColor: '#1E1F22', color: '#dbdee1', padding: 12, borderRadius: 8 }}
+                                    placeholder={isFr ? "Ex: https://monsite.com/image.gif" : "Ex: https://mysite.com/image.gif"}
+                                    placeholderTextColor="#80848e"
+                                    value={storage.customImageUrl || ''}
+                                    onChangeText={(text: string) => (storage.customImageUrl = text)}
+                                />
+                            </View>
+                        )}
                     </View>
-
-                    {showImg && (
-                        <InputField 
-                            label={isFr ? "Lien de l'image ou du GIF" : "Image or GIF link"}
-                            subLabel={isFr ? "Configure l'illustration à afficher à gauche (.png, .jpg, .gif)" : "Set the illustration to show on the left"}
-                            placeholder={isFr ? "Ex: https://monsite.com/image.gif" : "Ex: https://mysite.com/image.gif"}
-                            value={storage.customImageUrl || ''}
-                            onChangeText={(text: string) => (storage.customImageUrl = text)}
-                        />
-                    )}
 
                     <InputField 
                         label={isFr ? "Date de fin ou Texte libre" : "End Date or Custom Text"}

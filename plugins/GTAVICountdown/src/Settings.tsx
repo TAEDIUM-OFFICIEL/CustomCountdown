@@ -36,6 +36,22 @@ const Slider = (props: any) => (
     </View>
 )
 
+// NOUVEAU COMPOSANT : Unifie le design pour que la boîte de texte soit parfaitement intégrée
+const InputField = ({ label, subLabel, placeholder, value, onChangeText }: any) => (
+    <View style={{ marginBottom: 4 }}>
+        <TableRow label={label} subLabel={subLabel} arrow={false} />
+        <View style={{ paddingHorizontal: 16, paddingBottom: 12, marginTop: -8 }}>
+            <TextInput
+                style={{ backgroundColor: '#1E1F22', color: '#dbdee1', padding: 12, borderRadius: 8 }}
+                placeholder={placeholder}
+                placeholderTextColor="#80848e"
+                value={value}
+                onChangeText={onChangeText}
+            />
+        </View>
+    </View>
+)
+
 const LANGUAGES = [
     { label: 'Français', value: 'fr', description: 'Textes par défaut en Français' },
     { label: 'English', value: 'en', description: 'Default text in English' }
@@ -52,7 +68,7 @@ export default function Settings() {
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
                 
                 <TableRadioGroup
-                    title={isFr ? "Langue par défaut (Si champs vides)" : "Default Language (If fields are empty)"}
+                    title={isFr ? "Langue par défaut" : "Default Language"}
                     defaultValue={storage.language || 'en'}
                     onChange={(v: string) => (storage.language = v)}
                 >
@@ -79,118 +95,67 @@ export default function Settings() {
                         }
                     />
 
+                    {/* Si l'image est activée, on affiche ce champ. Sinon, il disparaît proprement ! */}
                     {showImg && (
-                        <>
-                            <TableRow 
-                                label={isFr ? "Lien de l'image ou du GIF" : "Image or GIF link"} 
-                                subLabel={isFr ? "Lien en .png, .jpg ou .gif" : "Link ending in .png, .jpg or .gif"} 
-                                arrow={false} 
-                            />
-                            <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                                <TextInput
-                                    style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                                    placeholder={isFr ? "Ex: https://monsite.com/image.gif" : "Ex: https://mysite.com/image.gif"}
-                                    placeholderTextColor="#80848e"
-                                    value={storage.customImageUrl || ''}
-                                    onChangeText={(text: string) => (storage.customImageUrl = text)}
-                                />
-                            </View>
-                        </>
+                        <InputField 
+                            label={isFr ? "Lien de l'image ou du GIF" : "Image or GIF link"}
+                            subLabel={isFr ? "Lien en .png, .jpg ou .gif" : "Link ending in .png, .jpg or .gif"}
+                            placeholder={isFr ? "Ex: https://monsite.com/image.gif" : "Ex: https://mysite.com/image.gif"}
+                            value={storage.customImageUrl || ''}
+                            onChangeText={(text: string) => (storage.customImageUrl = text)}
+                        />
                     )}
 
-                    <TableRow 
-                        label={isFr ? "Date de fin" : "End Date"} 
-                        subLabel={isFr ? "Format exact : YYYY-MM-DD" : "Exact format: YYYY-MM-DD"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Date de fin" : "End Date"}
+                        subLabel={isFr ? "Format exact : YYYY-MM-DD" : "Exact format: YYYY-MM-DD"}
+                        placeholder="Ex: 2026-11-19"
+                        value={storage.customDate || ''}
+                        onChangeText={(text: string) => (storage.customDate = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: 2026-11-19"
-                            placeholderTextColor="#80848e"
-                            value={storage.customDate || ''}
-                            onChangeText={(text: string) => (storage.customDate = text)}
-                        />
-                    </View>
 
-                    <TableRow 
-                        label={isFr ? "Titre principal" : "Main Title"} 
-                        subLabel={isFr ? "Le texte affiché en haut" : "The text displayed at the top"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Titre principal" : "Main Title"}
+                        subLabel={isFr ? "Le texte affiché en haut" : "The text displayed at the top"}
+                        placeholder="Ex: WEAK N' STEAL"
+                        value={storage.customTitle || ''}
+                        onChangeText={(text: string) => (storage.customTitle = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: WEAK N' STEAL"
-                            placeholderTextColor="#80848e"
-                            value={storage.customTitle || ''}
-                            onChangeText={(text: string) => (storage.customTitle = text)}
-                        />
-                    </View>
 
-                    <TableRow 
-                        label={isFr ? "Texte des Jours" : "Days Text"} 
-                        subLabel={isFr ? "Le texte à côté des chiffres" : "The text next to the numbers"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Texte des Jours" : "Days Text"}
+                        subLabel={isFr ? "Le texte à côté des chiffres" : "The text next to the numbers"}
+                        placeholder={isFr ? "Ex: JOURS RESTANTS" : "Ex: DAYS LEFT"}
+                        value={storage.customDaysText || ''}
+                        onChangeText={(text: string) => (storage.customDaysText = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder={isFr ? "Ex: JOURS RESTANTS" : "Ex: DAYS LEFT"}
-                            placeholderTextColor="#80848e"
-                            value={storage.customDaysText || ''}
-                            onChangeText={(text: string) => (storage.customDaysText = text)}
-                        />
-                    </View>
 
-                    <TableRow 
-                        label={isFr ? "Description (Bas)" : "Description (Bottom)"} 
-                        subLabel={isFr ? "Le petit texte tout en bas" : "The small text at the very bottom"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Description (Bas)" : "Description (Bottom)"}
+                        subLabel={isFr ? "Le petit texte tout en bas" : "The small text at the very bottom"}
+                        placeholder={isFr ? "Ex: Sortie prévue bientôt !" : "Ex: Releasing soon!"}
+                        value={storage.customDescription || ''}
+                        onChangeText={(text: string) => (storage.customDescription = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder={isFr ? "Ex: Sortie prévue bientôt !" : "Ex: Releasing soon!"}
-                            placeholderTextColor="#80848e"
-                            value={storage.customDescription || ''}
-                            onChangeText={(text: string) => (storage.customDescription = text)}
-                        />
-                    </View>
 
-                    <TableRow 
-                        label={isFr ? "Couleur de contour 1 (Gauche)" : "Outline Color 1 (Left)"} 
-                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Couleur de contour 1 (Gauche)" : "Outline Color 1 (Left)"}
+                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"}
+                        placeholder={isFr ? "Ex: #E146C6 (Rose par défaut)" : "Ex: #E146C6 (Default Pink)"}
+                        value={storage.customColor1 || ''}
+                        onChangeText={(text: string) => (storage.customColor1 = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder={isFr ? "Ex: #E146C6 (Rose par défaut)" : "Ex: #E146C6 (Default Pink)"}
-                            placeholderTextColor="#80848e"
-                            value={storage.customColor1 || ''}
-                            onChangeText={(text: string) => (storage.customColor1 = text)}
-                        />
-                    </View>
 
-                    <TableRow 
-                        label={isFr ? "Couleur de contour 2 (Droite)" : "Outline Color 2 (Right)"} 
-                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"} 
-                        arrow={false} 
+                    <InputField 
+                        label={isFr ? "Couleur de contour 2 (Droite)" : "Outline Color 2 (Right)"}
+                        subLabel={isFr ? "Code couleur HEX" : "HEX color code"}
+                        placeholder={isFr ? "Ex: #14acc0 (Cyan par défaut)" : "Ex: #14acc0 (Default Cyan)"}
+                        value={storage.customColor2 || ''}
+                        onChangeText={(text: string) => (storage.customColor2 = text)}
                     />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder={isFr ? "Ex: #14acc0 (Cyan par défaut)" : "Ex: #14acc0 (Default Cyan)"}
-                            placeholderTextColor="#80848e"
-                            value={storage.customColor2 || ''}
-                            onChangeText={(text: string) => (storage.customColor2 = text)}
-                        />
-                    </View>
 
                 </TableRowGroup>
 
-                {/* --- FRÉQUENCE TRADUITE DYNAMIQUEMENT --- */}
                 <TableRadioGroup
                     title={isFr ? "Fréquence d'apparition" : "Frequency"}
                     defaultValue={storage.frequency}
@@ -218,7 +183,6 @@ export default function Settings() {
                     })}
                 </TableRadioGroup>
 
-                {/* --- DURÉE TRADUITE DYNAMIQUEMENT --- */}
                 <TableRowGroup title={isFr ? "Comportement" : "Behavior"}>
                     <TableRow
                         label={isFr ? "Durée d'affichage" : "Toast Duration"}

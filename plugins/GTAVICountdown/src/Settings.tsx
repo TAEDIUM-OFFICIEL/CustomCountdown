@@ -4,7 +4,7 @@ import { components, type React, ReactNative } from '@revenge-mod/metro/common'
 import { storage } from '@vendetta/plugin'
 import { useProxy } from '@vendetta/storage'
 import { getAssetIDByName } from '@vendetta/ui/assets'
-import { FREQUENCIES, IMAGE_URL, ROCKSTAR_VI_URL } from './constants'
+import { FREQUENCIES } from './constants'
 import { showCountdownToast } from './utils'
 
 type ButtonType = typeof components.Button
@@ -24,8 +24,8 @@ const TableRadioGroup = findRedesignComponent('TableRadioGroup') as React.FC<Tab
 const TableRadioRow = findRedesignComponent('TableRadioRow') as TableRadioRowType
 
 const { TableRowGroup, Stack, TableRow } = components
-// On a ajouté TextInput ici
-const { ScrollView, View, TouchableOpacity, Image, StyleSheet, Linking, TextInput } = ReactNative
+// Importations nettoyées : plus d'Image, ni de StyleSheet, ni de Linking !
+const { ScrollView, View, TextInput } = ReactNative
 
 const Slider = (props: any) => (
     <View style={{ marginTop: 8 }}>
@@ -37,39 +37,32 @@ const Slider = (props: any) => (
     </View>
 )
 
-const HeroBanner = () => (
-    <TouchableOpacity onPress={() => Linking.openURL(ROCKSTAR_VI_URL)} activeOpacity={0.9} style={styles.heroContainer}>
-        <Image source={{ uri: IMAGE_URL }} style={styles.heroImage} resizeMode="cover" />
-    </TouchableOpacity>
-)
-
-const styles = StyleSheet.create({
-    heroContainer: {
-        width: '100%',
-        aspectRatio: 16 / 9,
-        borderRadius: 16,
-        overflow: 'hidden',
-        backgroundColor: '#000',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.6,
-        shadowRadius: 5.0,
-        elevation: 8,
-    },
-    heroImage: {
-        width: '100%',
-        height: '100%',
-    },
-})
-
 export default function Settings() {
     useProxy(storage)
 
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
-                <HeroBanner />
+                
+                {/* TON CHAMP PERSONNALISÉ EST MAINTENANT LE TOUT PREMIER ÉLÉMENT */}
+                <TableRowGroup title="Personnalisation">
+                    <TableRow
+                        label="Date de fin du compteur"
+                        subLabel="Format exact : YYYY-MM-DD (ex: 2026-11-19)"
+                        arrow={false}
+                    />
+                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                        <TextInput
+                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
+                            placeholder="Ex: 2026-11-19"
+                            placeholderTextColor="#80848e"
+                            value={storage.customDate || ''}
+                            onChangeText={(text: string) => (storage.customDate = text)}
+                        />
+                    </View>
+                </TableRowGroup>
 
+                {/* Les paramètres de fréquence */}
                 <TableRadioGroup
                     title="Frequency"
                     defaultValue={storage.frequency}
@@ -85,6 +78,7 @@ export default function Settings() {
                     ))}
                 </TableRadioGroup>
 
+                {/* Le paramètre de durée d'affichage */}
                 <TableRowGroup title="Behavior">
                     <TableRow
                         label="Toast Duration"
@@ -112,24 +106,7 @@ export default function Settings() {
                     />
                 </TableRowGroup>
 
-                {/* NOUVEAU BLOC : Champ de date personnalisé */}
-                <TableRowGroup title="Personnalisation">
-                    <TableRow
-                        label="Date de fin du compteur"
-                        subLabel="Format exact : YYYY-MM-DD (ex: 2026-11-19)"
-                        arrow={false}
-                    />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: 2026-11-19"
-                            placeholderTextColor="#80848e"
-                            value={storage.customDate || ''}
-                            onChangeText={(text: string) => (storage.customDate = text)}
-                        />
-                    </View>
-                </TableRowGroup>
-
+                {/* Le bouton de test */}
                 <View style={{ paddingHorizontal: 0 }}>
                     {Button && (
                         <Button
@@ -142,6 +119,7 @@ export default function Settings() {
                         />
                     )}
                 </View>
+
             </Stack>
         </ScrollView>
     )

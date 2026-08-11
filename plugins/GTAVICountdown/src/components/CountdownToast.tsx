@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     textContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
+        paddingLeft: 4, // Ajoute un peu d'espace si l'image est absente
     },
     headerText: {
         color: Colors.white,
@@ -81,9 +82,12 @@ const styles = StyleSheet.create({
 export default function CountdownToast({ days }: CountdownToastProps) {
     if (!LinearGradient) return null
 
-    // On récupère les textes personnalisés, ou on affiche le texte par défaut si le champ est vide
     const customTitle = storage.customTitle || 'GRAND THEFT AUTO VI'
     const customDescription = storage.customDescription || 'Coming 19th Nov 2026'
+    
+    // On vérifie les réglages de l'image
+    const showImage = storage.showImage ?? true
+    const currentImageUrl = storage.customImageUrl && storage.customImageUrl.trim() !== '' ? storage.customImageUrl : LOGO_URL
 
     return (
         <LinearGradient
@@ -93,9 +97,14 @@ export default function CountdownToast({ days }: CountdownToastProps) {
             style={styles.gradientBorder}
         >
             <View style={styles.container}>
-                <Image source={{ uri: LOGO_URL }} style={styles.logo} />
-
-                <View style={styles.separator} />
+                
+                {/* On affiche l'image et le séparateur UNIQUEMENT si showImage est vrai */}
+                {showImage && (
+                    <>
+                        <Image source={{ uri: currentImageUrl }} style={styles.logo} />
+                        <View style={styles.separator} />
+                    </>
+                )}
 
                 <View style={styles.textContainer}>
                     <Text style={styles.headerText}>{customTitle}</Text>

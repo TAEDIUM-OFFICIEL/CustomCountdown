@@ -24,7 +24,8 @@ const TableRadioGroup = findRedesignComponent('TableRadioGroup') as React.FC<Tab
 const TableRadioRow = findRedesignComponent('TableRadioRow') as TableRadioRowType
 
 const { TableRowGroup, Stack, TableRow } = components
-const { ScrollView, View, TextInput } = ReactNative
+// AJOUT IMPORTANT ICI : On importe 'Switch' pour le bouton On/Off
+const { ScrollView, View, TextInput, Switch } = ReactNative
 
 const Slider = (props: any) => (
     <View style={{ marginTop: 8 }}>
@@ -44,6 +45,35 @@ export default function Settings() {
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
                 
                 <TableRowGroup title="Personnalisation">
+                    
+                    {/* Bouton On/Off pour l'image */}
+                    <TableRow
+                        label="Afficher l'image"
+                        subLabel="Active ou désactive le logo à gauche"
+                        trailing={
+                            <Switch 
+                                value={storage.showImage ?? true} 
+                                onValueChange={(val: boolean) => (storage.showImage = val)} 
+                            />
+                        }
+                    />
+
+                    {/* Champ Lien de l'image */}
+                    <TableRow
+                        label="Lien de l'image"
+                        subLabel="Doit finir par .png ou .jpg"
+                        arrow={false}
+                    />
+                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                        <TextInput
+                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
+                            placeholder="Ex: https://monsite.com/image.png"
+                            placeholderTextColor="#80848e"
+                            value={storage.customImageUrl || ''}
+                            onChangeText={(text: string) => (storage.customImageUrl = text)}
+                        />
+                    </View>
+
                     {/* Champ Date */}
                     <TableRow
                         label="Date de fin du compteur"
@@ -76,7 +106,7 @@ export default function Settings() {
                         />
                     </View>
 
-                    {/* Champ Description (Bas) */}
+                    {/* Champ Description */}
                     <TableRow
                         label="Description (Bas)"
                         subLabel="Le petit texte affiché sous les jours"

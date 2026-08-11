@@ -1,10 +1,13 @@
 {
-    "name": "🇺🇸 GTA VI Countdown",
-    "description": "Counting down until you reach heaven.",
+    "name": "Custom Countdown",
+    "description": "A 100% customizable countdown. Originally created by Purple_EyeZ, modified by TaediumBreak.",
     "authors": [
         {
-            "name": "Purple_Ξye™",
+            "name": "Purple_EyeZ",
             "id": "646535537334812682"
+        },
+        {
+            "name": "TaediumBreak"
         }
     ],
     "main": "src/index.tsx"

@@ -44,7 +44,6 @@ const LANGUAGES = [
 export default function Settings() {
     useProxy(storage)
     
-    // On vérifie la langue pour tout le menu
     const isFr = storage.language === 'fr'
     const showImg = storage.showImage ?? true
 
@@ -52,7 +51,6 @@ export default function Settings() {
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
                 
-                {/* --- SÉLECTION DE LA LANGUE --- */}
                 <TableRadioGroup
                     title={isFr ? "Langue par défaut (Si champs vides)" : "Default Language (If fields are empty)"}
                     defaultValue={storage.language || 'en'}
@@ -70,7 +68,6 @@ export default function Settings() {
 
                 <TableRowGroup title={isFr ? "Personnalisation" : "Customization"}>
                     
-                    {/* Bouton On/Off pour l'image */}
                     <TableRow
                         label={isFr ? "Afficher l'image" : "Show image"}
                         subLabel={isFr ? "Active ou désactive l'image à gauche" : "Enable or disable the left image"}
@@ -82,7 +79,6 @@ export default function Settings() {
                         }
                     />
 
-                    {/* Champ Lien de l'image */}
                     {showImg && (
                         <>
                             <TableRow 
@@ -102,7 +98,6 @@ export default function Settings() {
                         </>
                     )}
 
-                    {/* Champ Date */}
                     <TableRow 
                         label={isFr ? "Date de fin" : "End Date"} 
                         subLabel={isFr ? "Format exact : YYYY-MM-DD" : "Exact format: YYYY-MM-DD"} 
@@ -118,7 +113,6 @@ export default function Settings() {
                         />
                     </View>
 
-                    {/* Champ Titre */}
                     <TableRow 
                         label={isFr ? "Titre principal" : "Main Title"} 
                         subLabel={isFr ? "Le texte affiché en haut" : "The text displayed at the top"} 
@@ -134,7 +128,6 @@ export default function Settings() {
                         />
                     </View>
 
-                    {/* Champ Texte des jours */}
                     <TableRow 
                         label={isFr ? "Texte des Jours" : "Days Text"} 
                         subLabel={isFr ? "Le texte à côté des chiffres" : "The text next to the numbers"} 
@@ -150,7 +143,6 @@ export default function Settings() {
                         />
                     </View>
 
-                    {/* Champ Description (Bas) */}
                     <TableRow 
                         label={isFr ? "Description (Bas)" : "Description (Bottom)"} 
                         subLabel={isFr ? "Le petit texte tout en bas" : "The small text at the very bottom"} 
@@ -166,7 +158,6 @@ export default function Settings() {
                         />
                     </View>
 
-                    {/* Les couleurs du contour */}
                     <TableRow 
                         label={isFr ? "Couleur de contour 1 (Gauche)" : "Outline Color 1 (Left)"} 
                         subLabel={isFr ? "Code couleur HEX" : "HEX color code"} 
@@ -199,31 +190,44 @@ export default function Settings() {
 
                 </TableRowGroup>
 
-                {/* Le reste ne change pas */}
+                {/* --- FRÉQUENCE TRADUITE DYNAMIQUEMENT --- */}
                 <TableRadioGroup
-                    title="Frequency"
+                    title={isFr ? "Fréquence d'apparition" : "Frequency"}
                     defaultValue={storage.frequency}
                     onChange={(v: string) => (storage.frequency = v)}
                 >
-                    {FREQUENCIES.map(freq => (
-                        <TableRadioRow
-                            key={freq.value}
-                            label={freq.label}
-                            subLabel={freq.description}
-                            value={freq.value}
-                        />
-                    ))}
+                    {FREQUENCIES.map(freq => {
+                        let label = freq.label
+                        let subLabel = freq.description
+
+                        if (isFr) {
+                            if (freq.value === 'startup') { label = 'Au démarrage'; subLabel = "Affiche la notification à l'ouverture de l'application" }
+                            if (freq.value === 'hourly') { label = 'Toutes les heures'; subLabel = "Affiche la notification une fois par heure" }
+                            if (freq.value === 'daily') { label = 'Tous les jours'; subLabel = "Affiche la notification une fois par jour" }
+                            if (freq.value === 'weekly') { label = 'Toutes les semaines'; subLabel = "Affiche la notification une fois par semaine" }
+                        }
+
+                        return (
+                            <TableRadioRow
+                                key={freq.value}
+                                label={label}
+                                subLabel={subLabel}
+                                value={freq.value}
+                            />
+                        )
+                    })}
                 </TableRadioGroup>
 
-                <TableRowGroup title="Behavior">
+                {/* --- DURÉE TRADUITE DYNAMIQUEMENT --- */}
+                <TableRowGroup title={isFr ? "Comportement" : "Behavior"}>
                     <TableRow
-                        label="Toast Duration"
+                        label={isFr ? "Durée d'affichage" : "Toast Duration"}
                         subLabel={
                             <View>
                                 <Text variant="text-xs/medium" color="TEXT_SUBTLE" style={{ marginTop: 4 }}>
-                                    The notification will stay on screen for{' '}
+                                    {isFr ? "La notification restera à l'écran pendant " : "The notification will stay on screen for "}
                                     <Text variant="text-xs/bold" color="MOBILE_TEXT_HEADING_PRIMARY">
-                                        {storage.displayDuration} seconds
+                                        {storage.displayDuration} {isFr ? "secondes" : "seconds"}
                                     </Text>
                                     .
                                 </Text>

@@ -15,7 +15,7 @@ const DefaultColors = {
 }
 
 interface CountdownToastProps {
-    days: number
+    days: any // Acceptation de types mixtes (nombre ou texte libre)
 }
 
 const styles = StyleSheet.create({
@@ -78,19 +78,26 @@ const styles = StyleSheet.create({
 export default function CountdownToast({ days }: CountdownToastProps) {
     if (!LinearGradient) return null
 
-    // On vérifie la langue sélectionnée dans les réglages
     const isFr = storage.language === 'fr'
 
-    // On définit les textes par défaut selon la langue
-    const defaultTitle = 'GRAND THEFT AUTO VI'
-    const defaultDesc = isFr ? 'Sortie prévue le 19 Nov 2026' : 'Coming 19th Nov 2026'
-    const defaultDaysText = isFr ? 'JOURS RESTANTS' : 'DAYS LEFT'
-
-    // On applique le texte personnalisé s'il existe, sinon on met la version traduite
-    const customTitle = storage.customTitle || defaultTitle
-    const customDescription = storage.customDescription || defaultDesc
-    const customDaysText = storage.customDaysText || defaultDaysText
+    // Configuration des textes dynamiques ou à blanc si l'utilisateur supprime le contenu
+    const hasTitleSetting = storage.customTitle !== undefined
+    const customTitle = hasTitleSetting ? storage.customTitle : 'GRAND THEFT AUTO VI'
     
+    const hasDescSetting = storage.customDescription !== undefined
+    const customDescription = hasDescSetting ? storage.customDescription : (isFr ? 'Sortie prévue le 19 Nov 2026' : 'Coming 19th Nov 2026')
+    
+    const hasDaysTextSetting = storage.customDaysText !== undefined
+    const customDaysText = hasDaysTextSetting ? storage.customDaysText : (isFr ? 'JOURS RESTANTS' : 'DAYS LEFT')
+    
+    // Protection anti-NaN : si "days" n'est pas un nombre valide, on prend la valeur brute entrée par l'utilisateur
+    let finalDaysDisplay = days
+    if (typeof days === 'number' && isNaN(days)) {
+        finalDaysDisplay = storage.customDate || ''
+    } else if (String(days).includes('NaN')) {
+        finalDaysDisplay = storage.customDate || ''
+    }
+
     const color1 = storage.customColor1 && storage.customColor1.trim() !== '' ? storage.customColor1 : DefaultColors.primary
     const color2 = storage.customColor2 && storage.customColor2.trim() !== '' ? storage.customColor2 : DefaultColors.secondary
 
@@ -114,14 +121,24 @@ export default function CountdownToast({ days }: CountdownToastProps) {
                 )}
 
                 <View style={styles.textContainer}>
-                    <Text style={styles.headerText}>{customTitle}</Text>
+                    {customTitle && customTitle.trim() !== '' && (
+                        <Text style={styles.headerText}>{customTitle}</Text>
+                    )}
 
-                    <View style={styles.countdownRow}>
-                        <Text style={[styles.daysText, { color: color1, textShadowColor: color1 }]}>{days}</Text>
-                        <Text style={[styles.subText, { color: color2, textShadowColor: color2 }]}>{customDaysText}</Text>
-                    </View>
+                    {((finalDaysDisplay && finalDaysDisplay.trim() !== '') || (customDaysText && customDaysText.trim() !== '')) && (
+                        <View style={styles.countdownRow}>
+                            {finalDaysDisplay && finalDaysDisplay.trim() !== '' && (
+                                <Text style={[styles.daysText, { color: color1, textShadowColor: color1 }]}>{finalDaysDisplay}</Text>
+                            )}
+                            {customDaysText && customDaysText.trim() !== '' && (
+                                <Text style={[styles.subText, { color: color2, textShadowColor: color2 }]}>{customDaysText}</Text>
+                            )}
+                        </View>
+                    )}
 
-                    <Text style={styles.footerText}>{customDescription}</Text>
+                    {customDescription && customDescription.trim() !== '' && (
+                        <Text style={styles.footerText}>{customDescription}</Text>
+                    )}
                 </View>
             </View>
         </LinearGradient>

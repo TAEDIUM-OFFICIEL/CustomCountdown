@@ -78,12 +78,19 @@ const styles = StyleSheet.create({
 export default function CountdownToast({ days }: CountdownToastProps) {
     if (!LinearGradient) return null
 
-    // On récupère tous les textes personnalisés
-    const customTitle = storage.customTitle || 'GRAND THEFT AUTO VI'
-    const customDescription = storage.customDescription || 'Coming 19th Nov 2026'
-    const customDaysText = storage.customDaysText || 'DAYS LEFT'
+    // On vérifie la langue sélectionnée dans les réglages
+    const isFr = storage.language === 'fr'
+
+    // On définit les textes par défaut selon la langue
+    const defaultTitle = 'GRAND THEFT AUTO VI'
+    const defaultDesc = isFr ? 'Sortie prévue le 19 Nov 2026' : 'Coming 19th Nov 2026'
+    const defaultDaysText = isFr ? 'JOURS RESTANTS' : 'DAYS LEFT'
+
+    // On applique le texte personnalisé s'il existe, sinon on met la version traduite
+    const customTitle = storage.customTitle || defaultTitle
+    const customDescription = storage.customDescription || defaultDesc
+    const customDaysText = storage.customDaysText || defaultDaysText
     
-    // On récupère les couleurs (avec une valeur par défaut si c'est vide)
     const color1 = storage.customColor1 && storage.customColor1.trim() !== '' ? storage.customColor1 : DefaultColors.primary
     const color2 = storage.customColor2 && storage.customColor2.trim() !== '' ? storage.customColor2 : DefaultColors.secondary
 
@@ -110,7 +117,6 @@ export default function CountdownToast({ days }: CountdownToastProps) {
                     <Text style={styles.headerText}>{customTitle}</Text>
 
                     <View style={styles.countdownRow}>
-                        {/* On applique la couleur 1 au chiffre et la couleur 2 au texte pour correspondre au dégradé */}
                         <Text style={[styles.daysText, { color: color1, textShadowColor: color1 }]}>{days}</Text>
                         <Text style={[styles.subText, { color: color2, textShadowColor: color2 }]}>{customDaysText}</Text>
                     </View>

@@ -36,13 +36,37 @@ const Slider = (props: any) => (
     </View>
 )
 
+const LANGUAGES = [
+    { label: 'Français', value: 'fr', description: 'Textes par défaut en Français' },
+    { label: 'English', value: 'en', description: 'Default text in English' }
+]
+
 export default function Settings() {
     useProxy(storage)
+    
+    // On stocke l'état du bouton dans une variable pour s'en servir juste après
+    const showImg = storage.showImage ?? true
 
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 16 }} spacing={24}>
                 
+                {/* --- SÉLECTION DE LA LANGUE --- */}
+                <TableRadioGroup
+                    title="Langue par défaut (Si champs vides)"
+                    defaultValue={storage.language || 'en'}
+                    onChange={(v: string) => (storage.language = v)}
+                >
+                    {LANGUAGES.map(lang => (
+                        <TableRadioRow
+                            key={lang.value}
+                            label={lang.label}
+                            subLabel={lang.description}
+                            value={lang.value}
+                        />
+                    ))}
+                </TableRadioGroup>
+
                 <TableRowGroup title="Personnalisation">
                     
                     {/* Bouton On/Off pour l'image */}
@@ -51,23 +75,27 @@ export default function Settings() {
                         subLabel="Active ou désactive l'image à gauche"
                         trailing={
                             <Switch 
-                                value={storage.showImage ?? true} 
+                                value={showImg} 
                                 onValueChange={(val: boolean) => (storage.showImage = val)} 
                             />
                         }
                     />
 
-                    {/* Champ Lien de l'image (GIF compatible) */}
-                    <TableRow label="Lien de l'image ou du GIF" subLabel="Lien en .png, .jpg ou .gif" arrow={false} />
-                    <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-                        <TextInput
-                            style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
-                            placeholder="Ex: https://monsite.com/image.gif"
-                            placeholderTextColor="#80848e"
-                            value={storage.customImageUrl || ''}
-                            onChangeText={(text: string) => (storage.customImageUrl = text)}
-                        />
-                    </View>
+                    {/* ASTUCE ICI : Ce bloc ne s'affiche QUE si 'showImg' est sur ON */}
+                    {showImg && (
+                        <>
+                            <TableRow label="Lien de l'image ou du GIF" subLabel="Lien en .png, .jpg ou .gif" arrow={false} />
+                            <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                                <TextInput
+                                    style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
+                                    placeholder="Ex: https://monsite.com/image.gif"
+                                    placeholderTextColor="#80848e"
+                                    value={storage.customImageUrl || ''}
+                                    onChangeText={(text: string) => (storage.customImageUrl = text)}
+                                />
+                            </View>
+                        </>
+                    )}
 
                     {/* Champ Date */}
                     <TableRow label="Date de fin" subLabel="Format exact : YYYY-MM-DD" arrow={false} />
@@ -94,7 +122,7 @@ export default function Settings() {
                     </View>
 
                     {/* Champ Texte des jours */}
-                    <TableRow label="Texte 'DAYS LEFT'" subLabel="Le texte à côté des chiffres" arrow={false} />
+                    <TableRow label="Texte des Jours" subLabel="Le texte à côté des chiffres" arrow={false} />
                     <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                         <TextInput
                             style={{ backgroundColor: '#2b2d31', color: '#dbdee1', padding: 10, borderRadius: 8, marginTop: 4 }}
@@ -142,7 +170,6 @@ export default function Settings() {
 
                 </TableRowGroup>
 
-                {/* Le reste des paramètres originaux (Fréquence, Bouton Test...) */}
                 <TableRadioGroup
                     title="Frequency"
                     defaultValue={storage.frequency}
